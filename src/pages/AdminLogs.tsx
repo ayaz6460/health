@@ -32,7 +32,7 @@ export default function AdminLogs() {
   }, [filterProject, filterStatus, page]);
 
   useEffect(() => {
-    supabase.from('health_projects').select('id, name').order('name').then(({ data }) => setProjects(data || []));
+    supabase.from('health_projects').select('*').order('name').then(({ data }) => setProjects(data || []));
   }, []);
 
   useEffect(() => { setPage(0); }, [filterProject, filterStatus]);

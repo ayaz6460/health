@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="stats-grid">
-        {statCards.map((s, i) => (
+        {statCards.map((s) => (
           <div key={s.label} className="card stat-card" style={{ '--accent-card': s.color } as React.CSSProperties}>
             <div className="stat-icon" style={{ background: `${s.color}14`, color: s.color }}>
               {s.icon}
