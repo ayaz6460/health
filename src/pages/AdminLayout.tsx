@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+import MotionDiv from '../components/MotionDiv';
 
 const NAV = [
   { to: '', label: 'Overview', icon: '📊', end: true },
@@ -23,9 +24,14 @@ export default function AdminLayout({ session }: { session: Session | null }) {
 
   return (
     <div className="admin-layout">
-      <aside className="sidebar">
+      <MotionDiv
+        className="sidebar"
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+      >
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">⚡</div>
+          <div className="sidebar-logo-icon animate-[float_3s_ease-in-out_infinite]">⚡</div>
           <div>
             <div className="sidebar-logo-text">VigilNode</div>
             <div className="sidebar-logo-sub">Monitoring</div>
@@ -56,10 +62,16 @@ export default function AdminLayout({ session }: { session: Session | null }) {
             Sign Out
           </button>
         </div>
-      </aside>
+      </MotionDiv>
 
       <main className="admin-main">
-        <Outlet />
+        <MotionDiv
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+        >
+          <Outlet />
+        </MotionDiv>
       </main>
     </div>
   );

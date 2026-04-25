@@ -13,9 +13,9 @@ interface MotionDivProps {
 export default function MotionDiv({
   children,
   className = '',
-  initial = { opacity: 0, y: 20 },
+  initial = { opacity: 0, y: 12 },
   animate = { opacity: 1, y: 0 },
-  transition = { type: 'spring', stiffness: 300, damping: 30 },
+  transition = { type: 'spring', stiffness: 260, damping: 20 },
   whileHover,
   whileTap,
   ...props

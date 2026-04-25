@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   }, []);
 
   const loadDashboard = async () => {
+    setLoading(true);
     const [{ count: pCount }, { count: eCount }, { data: logs }, { data: logStats }] = await Promise.all([
       supabase.from('health_projects').select('*', { count: 'exact', head: true }),
       supabase.from('health_endpoints').select('*', { count: 'exact', head: true }).eq('is_active', true),
@@ -49,10 +50,15 @@ export default function AdminDashboard() {
   const statCards = [
     { icon: '📁', label: 'Projects', value: stats.projects, color: '#0071e3' },
     { icon: '🔗', label: 'Active Endpoints', value: stats.endpoints, color: '#5856d6' },
-    { icon: '📈', label: '30-Day Uptime', value: `${stats.avgUptime}%`, color: stats.avgUptime > 99 ? '#34c759' : '#ff9500' },
+    { icon: '📈', label: '30-Day Uptime', value: `${stats.avgUptime}%`, color: stats.avgUptime > 99 ? '#34c759' : stats.avgUptime > 95 ? '#ff9500' : '#ff3b30' },
   ];
 
-  if (loading) return <div className="loading"><AppleSpinner size={20} /> Loading dashboard...</div>;
+  if (loading) return (
+    <div className="loading">
+      <AppleSpinner size={20} />
+      <span>Loading dashboard...</span>
+    </div>
+  );
 
   return (
     <div>
@@ -61,25 +67,33 @@ export default function AdminDashboard() {
           <h1 className="page-title">Overview</h1>
           <p className="page-subtitle">Real-time monitoring summary · Auto-refreshes every 30s</p>
         </div>
-        <button className="btn btn-ghost btn-sm" onClick={loadDashboard}>↻ Refresh</button>
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={loadDashboard}
+          style={{ width: 'auto', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6, borderRadius: 8, border: '1px solid var(--border)' }}
+          aria-label="Refresh dashboard"
+        >
+          <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+          </svg>
+          Refresh
+        </button>
       </div>
 
       <div className="stats-grid">
-        {statCards.map(s => (
-          <div key={s.label} className="card stat-card">
-            <div className="stat-icon" style={{ background: `${s.color}10`, color: s.color }}>
+        {statCards.map((s, i) => (
+          <div key={s.label} className="card stat-card" style={{ '--accent-card': s.color } as React.CSSProperties}>
+            <div className="stat-icon" style={{ background: `${s.color}14`, color: s.color }}>
               {s.icon}
             </div>
-            <div className="stat-value" style={{ color: s.color }}>
-              {s.value}
-            </div>
+            <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
             <div className="stat-label">{s.label}</div>
           </div>
         ))}
       </div>
 
       <div className="card">
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ fontWeight: 600, fontSize: 16, letterSpacing: '-0.02em' }}>Live Check Feed</div>
           <span className="badge badge-neutral" style={{ fontSize: 11 }}>Last 10 checks</span>
         </div>
