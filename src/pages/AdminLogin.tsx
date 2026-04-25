@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import AppleSpinner from '../components/AppleSpinner';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('admin@vigilnode.dev');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,7 +40,7 @@ export default function AdminLogin() {
               className="form-input"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="admin@vigilnode.dev"
+              placeholder="Enter your email"
               required
             />
           </div>
@@ -60,11 +60,7 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <div style={{ marginTop: 24, padding: '14px 16px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 11, color: 'var(--text-light)', marginBottom: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Default Credentials</div>
-          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>📧 admin@vigilnode.dev</div>
-          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>🔑 Admin@VigilNode2024!</div>
-        </div>
+
       </div>
     </div>
   );
