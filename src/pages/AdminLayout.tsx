@@ -1,4 +1,5 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 import MotionDiv from '../components/MotionDiv';
@@ -14,18 +15,59 @@ const NAV = [
 
 export default function AdminLayout({ session }: { session: Session | null }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAdminDomain = window.location.hostname.startsWith('admin.');
   const basePath = isAdminDomain ? '/' : '/admin/';
+
+  // Close sidebar on route change
+  useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
+
+  // Prevent body scroll when sidebar is open on mobile
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate(isAdminDomain ? '/login' : '/admin/login');
   };
 
+  const currentPage = NAV.find(n =>
+    n.end
+      ? location.pathname === basePath || location.pathname === basePath.slice(0, -1)
+      : location.pathname.includes(n.to)
+  );
+
   return (
     <div className="admin-layout">
+      {/* Mobile top bar */}
+      <div className="mobile-topbar">
+        <button
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen(v => !v)}
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? '✕' : '☰'}
+        </button>
+        <div className="mobile-topbar-brand">
+          <span>⚡</span>
+          <span>VigilNode</span>
+        </div>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {currentPage?.label || ''}
+        </span>
+      </div>
+
+      {/* Overlay */}
+      <div
+        className={`sidebar-overlay${sidebarOpen ? ' open' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
       <MotionDiv
-        className="sidebar"
+        className={`sidebar${sidebarOpen ? ' open' : ''}`}
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 220, damping: 20 }}
@@ -48,7 +90,7 @@ export default function AdminLayout({ session }: { session: Session | null }) {
               className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             >
               <span className="icon">{icon}</span>
-              {label}
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
