@@ -3,6 +3,7 @@ export interface Project {
   name: string;
   base_url: string;
   description: string | null;
+  admin_email: string | null;
   public_visible: boolean;
   created_at: string;
   updated_at: string;

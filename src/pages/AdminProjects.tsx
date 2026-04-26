@@ -4,7 +4,7 @@ import AppleSpinner from '../components/AppleSpinner';
 import type { Project } from '../types';
 
 const EMPTY: Omit<Project, 'id' | 'created_at' | 'updated_at'> = {
-  name: '', base_url: '', description: '', public_visible: true,
+  name: '', base_url: '', description: '', admin_email: '', public_visible: true,
 };
 
 export default function AdminProjects() {
@@ -25,7 +25,7 @@ export default function AdminProjects() {
   };
 
   const openNew = () => { setEditing(null); setForm(EMPTY); setError(''); setShowModal(true); };
-  const openEdit = (p: Project) => { setEditing(p); setForm({ name: p.name, base_url: p.base_url, description: p.description || '', public_visible: p.public_visible }); setError(''); setShowModal(true); };
+  const openEdit = (p: Project) => { setEditing(p); setForm({ name: p.name, base_url: p.base_url, description: p.description || '', admin_email: p.admin_email || '', public_visible: p.public_visible }); setError(''); setShowModal(true); };
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +79,7 @@ export default function AdminProjects() {
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: "'SF Mono', Menlo, monospace" }}>{p.base_url}</div>
                 {p.description && <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{p.description}</div>}
+                {p.admin_email && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>📧 Admin: {p.admin_email}</div>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 <button className="btn btn-ghost btn-sm" onClick={() => openEdit(p)}>Edit</button>
@@ -109,6 +110,11 @@ export default function AdminProjects() {
               <div className="form-group">
                 <label className="form-label">Description</label>
                 <textarea className="form-input" rows={3} value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Optional description..." style={{ resize: 'vertical' }} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Admin Alert Email</label>
+                <input className="form-input" type="email" value={form.admin_email || ''} onChange={e => setForm(f => ({ ...f, admin_email: e.target.value }))} placeholder="admin@yourapp.com" />
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>Receives detailed technical alerts (status code, response time, errors) on every incident.</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button type="button" className={`toggle ${form.public_visible ? 'on' : ''}`} onClick={() => setForm(f => ({ ...f, public_visible: !f.public_visible }))} />
